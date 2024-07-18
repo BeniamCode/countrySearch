@@ -14,8 +14,11 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsImport } from './routes/settings'
-import { Route as CountriesImport } from './routes/countries'
+import { Route as CountriesRouteImport } from './routes/countries/route'
+import { Route as CountriesIndexImport } from './routes/countries/index'
+import { Route as CountriesLayoutImport } from './routes/countries/_layout'
 import { Route as CountriesCountryNameImport } from './routes/countries/$countryName'
+import { Route as CountriesLayoutHelloImport } from './routes/countries/_layout.hello'
 
 // Create Virtual Routes
 
@@ -28,7 +31,7 @@ const SettingsRoute = SettingsImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CountriesRoute = CountriesImport.update({
+const CountriesRouteRoute = CountriesRouteImport.update({
   path: '/countries',
   getParentRoute: () => rootRoute,
 } as any)
@@ -38,9 +41,24 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const CountriesIndexRoute = CountriesIndexImport.update({
+  path: '/',
+  getParentRoute: () => CountriesRouteRoute,
+} as any)
+
+const CountriesLayoutRoute = CountriesLayoutImport.update({
+  id: '/_layout',
+  getParentRoute: () => CountriesRouteRoute,
+} as any)
+
 const CountriesCountryNameRoute = CountriesCountryNameImport.update({
   path: '/$countryName',
-  getParentRoute: () => CountriesRoute,
+  getParentRoute: () => CountriesRouteRoute,
+} as any)
+
+const CountriesLayoutHelloRoute = CountriesLayoutHelloImport.update({
+  path: '/hello',
+  getParentRoute: () => CountriesLayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -58,7 +76,7 @@ declare module '@tanstack/react-router' {
       id: '/countries'
       path: '/countries'
       fullPath: '/countries'
-      preLoaderRoute: typeof CountriesImport
+      preLoaderRoute: typeof CountriesRouteImport
       parentRoute: typeof rootRoute
     }
     '/settings': {
@@ -73,7 +91,28 @@ declare module '@tanstack/react-router' {
       path: '/$countryName'
       fullPath: '/countries/$countryName'
       preLoaderRoute: typeof CountriesCountryNameImport
-      parentRoute: typeof CountriesImport
+      parentRoute: typeof CountriesRouteImport
+    }
+    '/countries/_layout': {
+      id: '/countries/_layout'
+      path: ''
+      fullPath: '/countries'
+      preLoaderRoute: typeof CountriesLayoutImport
+      parentRoute: typeof CountriesRouteImport
+    }
+    '/countries/': {
+      id: '/countries/'
+      path: '/'
+      fullPath: '/countries/'
+      preLoaderRoute: typeof CountriesIndexImport
+      parentRoute: typeof CountriesRouteImport
+    }
+    '/countries/_layout/hello': {
+      id: '/countries/_layout/hello'
+      path: '/hello'
+      fullPath: '/countries/hello'
+      preLoaderRoute: typeof CountriesLayoutHelloImport
+      parentRoute: typeof CountriesLayoutImport
     }
   }
 }
@@ -82,7 +121,13 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
-  CountriesRoute: CountriesRoute.addChildren({ CountriesCountryNameRoute }),
+  CountriesRouteRoute: CountriesRouteRoute.addChildren({
+    CountriesCountryNameRoute,
+    CountriesLayoutRoute: CountriesLayoutRoute.addChildren({
+      CountriesLayoutHelloRoute,
+    }),
+    CountriesIndexRoute,
+  }),
   SettingsRoute,
 })
 
@@ -103,9 +148,11 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "index.lazy.tsx"
     },
     "/countries": {
-      "filePath": "countries.tsx",
+      "filePath": "countries/route.tsx",
       "children": [
-        "/countries/$countryName"
+        "/countries/$countryName",
+        "/countries/_layout",
+        "/countries/"
       ]
     },
     "/settings": {
@@ -114,6 +161,21 @@ export const routeTree = rootRoute.addChildren({
     "/countries/$countryName": {
       "filePath": "countries/$countryName.tsx",
       "parent": "/countries"
+    },
+    "/countries/_layout": {
+      "filePath": "countries/_layout.tsx",
+      "parent": "/countries",
+      "children": [
+        "/countries/_layout/hello"
+      ]
+    },
+    "/countries/": {
+      "filePath": "countries/index.tsx",
+      "parent": "/countries"
+    },
+    "/countries/_layout/hello": {
+      "filePath": "countries/_layout.hello.tsx",
+      "parent": "/countries/_layout"
     }
   }
 }

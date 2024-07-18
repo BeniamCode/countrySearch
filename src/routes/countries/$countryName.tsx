@@ -1,36 +1,87 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export const Route = createFileRoute('/countries/$countryName')({
   component: CountryDetailPage,
 });
 
-// function CountryDetailPage() {
-//   const { countryName } = Route.useParams();
+function CountryDetailPage() {
+  const { countryName } = Route.useParams();
   
-//   const { data: countryData, isLoading, error } = useQuery({
-//     queryKey: ['country', countryName],
-//     queryFn: async () => {
-//       const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch country data');
-//       }
-//       const data = await response.json();
-//       return data[0]; // Assuming the API returns an array with one country
-//     },
-//   });
+  const { data: countryData, isLoading, error } = useQuery({
+    queryKey: ['country', countryName],
+    queryFn: async () => {
+      const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch country data');
+      }
+      const data = await response.json();
+      return data[0]; // Assuming the API returns an array with one country
+    },
+  });
 
-//   if (isLoading) return <div>Loading...</div>;
-//   if (error) return <div>An error occurred: {error.message}</div>;
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-3/4" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-4 w-1/2 mb-2" />
+            <Skeleton className="h-4 w-1/3" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-//   return (
-//     <div className="container mx-auto px-4 py-8">
-//       <h1 className="text-3xl font-bold mb-4">{countryData?.name.common}</h1>
-//       {/* Add more country details here */}
-//     </div>
-//   );
-// }
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card className="bg-red-50 border-red-200">
+          <CardHeader>
+            <CardTitle className="text-red-600">Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-600">An error occurred: {error.message}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-function CountryDetailPage(){
-  return <div>hello from contry detail page</div>
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold flex items-center gap-4">
+            <img 
+              src={countryData?.flags.svg} 
+              alt={`Flag of ${countryData?.name.common}`} 
+              className="h-8 w-auto"
+            />
+            {countryData?.name.common}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-lg mb-2">
+            <span className="font-semibold">Capital:</span> {countryData?.capital?.[0] || 'N/A'}
+          </p>
+          <p className="text-lg mb-2">
+            <span className="font-semibold">Population:</span> {countryData?.population || 'N/A'}
+          </p>
+          <img 
+            src={countryData?.flags.svg} 
+            alt={`Flag of ${countryData?.name.common}`} 
+            className="w-full max-w-md h-auto mt-4 border"
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
+
+export default CountryDetailPage;

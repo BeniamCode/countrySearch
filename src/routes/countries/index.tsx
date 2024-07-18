@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import React, { useState, useCallback } from 'react';
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search } from "lucide-react";
+import { z } from 'zod';
 
 // Define the type for a country
 interface Country {
@@ -13,12 +14,19 @@ interface Country {
   cca3: string;
 }
 
-export const Route = createFileRoute('/countries')({
+// Zod schema for country name validation
+const countryNameSchema = z.string().regex(/^[a-zA-Z\s]*$/, {
+  message: "Only letters and spaces are allowed"
+});
+
+export const Route = createFileRoute('/countries/')({
+  
   component: CountrySearchPage
 });
 
 function CountrySearchPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const { data: countries, isLoading, error } = useQuery<Country[], Error>({
     queryKey: ['countries', searchTerm],
@@ -38,6 +46,20 @@ function CountrySearchPage() {
     return name.toLowerCase().replace(/\s+/g, '-');
   };
 
+  // Handle input change with Zod validation
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    try {
+      countryNameSchema.parse(input);
+      setSearchTerm(input);
+      setValidationError(null);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setValidationError(error.errors[0].message);
+      }
+    }
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="w-full max-w-2xl mx-auto">
@@ -53,11 +75,15 @@ function CountrySearchPage() {
               placeholder="Enter a country name..."
               className="pl-10 pr-4 py-2 w-full rounded-full focus:ring-0 focus:ring-offset-0"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleInputChange}
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           </div>
           
+          {validationError && (
+            <p className="text-red-500 text-sm mt-1">{validationError}</p>
+          )}
+
           {isLoading && <p>Searching countries...</p>}
           {error && <p>Error fetching countries: {error.message}</p>}
           
@@ -66,7 +92,6 @@ function CountrySearchPage() {
               <Link
                 key={country.cca3}
                 to="/countries/$countryName"
-                //to= {`/countries/${formatCountryNameForUrl(country.name.common)}`}
                 params={{ countryName: formatCountryNameForUrl(country.name.common) }}
                 className="block p-2 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
               >
@@ -76,6 +101,7 @@ function CountrySearchPage() {
           </div>
         </CardContent>
       </Card>
+
     </div>
   );
 }

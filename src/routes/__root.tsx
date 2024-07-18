@@ -1,11 +1,10 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { Home, Search, Settings } from 'lucide-react'
-
+import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { Home, Search, Settings } from 'lucide-react';
 
 export const Route = createRootRoute({
   component: RootComponent,
-})
+});
 
 function RootComponent() {
   return (
@@ -14,15 +13,27 @@ function RootComponent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16">
             <nav className="flex space-x-4">
-              <NavLink to="/" icon={Home}>
+              <Link
+                to="/"
+                className="flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              >
+                <Home size={18} className="mr-2" />
                 Home
-              </NavLink>
-              <NavLink to="/countries" icon={Search}>
+              </Link>
+              <Link
+                to="/countries"
+                className="flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              >
+                <Search size={18} className="mr-2" />
                 Search
-              </NavLink>
-              <NavLink to="/settings" icon={Settings}>
+              </Link>
+              <Link
+                to="/settings"
+                className="flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              >
+                <Settings size={18} className="mr-2" />
                 Settings
-              </NavLink>
+              </Link>
             </nav>
           </div>
         </div>
@@ -45,25 +56,6 @@ function RootComponent() {
       {process.env.NODE_ENV === 'development' && <TanStackRouterDevtools />}
     </div>
   );
-
-  function NavLink({ to, children, icon: Icon }) {
-    return (
-      <Link
-        to={to}
-        className={({ isActive }) =>
-          `flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out ${
-            isActive
-              ? 'bg-indigo-100 text-indigo-700'
-              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-          }`
-        }
-      >
-        {Icon && <Icon size={18} className="mr-2" />}
-        {children}
-      </Link>
-    );
-  }
 }
 
-
-
+export default RootComponent;
