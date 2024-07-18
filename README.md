@@ -2,15 +2,16 @@
 
 This projects has the following main goals
 
-- Provide a search bar to browse countries by name at /countries
+- Provide a search bar to browse countries by name at /countries from Restcountries.com use the RESTful API
 - Search results are linked to a seperate page with details at /countries/{country name}
+
+
+## Tech Stack
+
+For this project the following tech was used
 
 ### Vite
 Great support for Typescript and React
-
-### Tech Stack
-
-For this project the following tech was used
 
 ### Tanstack Route
 
@@ -36,7 +37,7 @@ To install please run
  ```npm install```
 
 Then
- 
+
 ```npm run dev```
 
 
