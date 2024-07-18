@@ -16,9 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as CountriesRouteImport } from './routes/countries/route'
 import { Route as CountriesIndexImport } from './routes/countries/index'
-import { Route as CountriesLayoutImport } from './routes/countries/_layout'
 import { Route as CountriesCountryNameImport } from './routes/countries/$countryName'
-import { Route as CountriesLayoutHelloImport } from './routes/countries/_layout.hello'
 
 // Create Virtual Routes
 
@@ -46,19 +44,9 @@ const CountriesIndexRoute = CountriesIndexImport.update({
   getParentRoute: () => CountriesRouteRoute,
 } as any)
 
-const CountriesLayoutRoute = CountriesLayoutImport.update({
-  id: '/_layout',
-  getParentRoute: () => CountriesRouteRoute,
-} as any)
-
 const CountriesCountryNameRoute = CountriesCountryNameImport.update({
   path: '/$countryName',
   getParentRoute: () => CountriesRouteRoute,
-} as any)
-
-const CountriesLayoutHelloRoute = CountriesLayoutHelloImport.update({
-  path: '/hello',
-  getParentRoute: () => CountriesLayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -93,26 +81,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountriesCountryNameImport
       parentRoute: typeof CountriesRouteImport
     }
-    '/countries/_layout': {
-      id: '/countries/_layout'
-      path: ''
-      fullPath: '/countries'
-      preLoaderRoute: typeof CountriesLayoutImport
-      parentRoute: typeof CountriesRouteImport
-    }
     '/countries/': {
       id: '/countries/'
       path: '/'
       fullPath: '/countries/'
       preLoaderRoute: typeof CountriesIndexImport
       parentRoute: typeof CountriesRouteImport
-    }
-    '/countries/_layout/hello': {
-      id: '/countries/_layout/hello'
-      path: '/hello'
-      fullPath: '/countries/hello'
-      preLoaderRoute: typeof CountriesLayoutHelloImport
-      parentRoute: typeof CountriesLayoutImport
     }
   }
 }
@@ -123,9 +97,6 @@ export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   CountriesRouteRoute: CountriesRouteRoute.addChildren({
     CountriesCountryNameRoute,
-    CountriesLayoutRoute: CountriesLayoutRoute.addChildren({
-      CountriesLayoutHelloRoute,
-    }),
     CountriesIndexRoute,
   }),
   SettingsRoute,
@@ -151,7 +122,6 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "countries/route.tsx",
       "children": [
         "/countries/$countryName",
-        "/countries/_layout",
         "/countries/"
       ]
     },
@@ -162,20 +132,9 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "countries/$countryName.tsx",
       "parent": "/countries"
     },
-    "/countries/_layout": {
-      "filePath": "countries/_layout.tsx",
-      "parent": "/countries",
-      "children": [
-        "/countries/_layout/hello"
-      ]
-    },
     "/countries/": {
       "filePath": "countries/index.tsx",
       "parent": "/countries"
-    },
-    "/countries/_layout/hello": {
-      "filePath": "countries/_layout.hello.tsx",
-      "parent": "/countries/_layout"
     }
   }
 }

@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
+
+//Create file route for  `/countries/$countryName`
 export const Route = createFileRoute('/countries/$countryName')({
   component: CountryDetailPage,
 });
@@ -10,10 +12,12 @@ export const Route = createFileRoute('/countries/$countryName')({
 function CountryDetailPage() {
   const { countryName } = Route.useParams();
   
+  const decodedCountryName = decodeURIComponent(countryName.replace(/-/g, ' ')); //return name to 
+
   const { data: countryData, isLoading, error } = useQuery({
-    queryKey: ['country', countryName],
+    queryKey: ['country', decodedCountryName],
     queryFn: async () => {
-      const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+      const response = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(decodedCountryName)}?fullText=true`);
       if (!response.ok) {
         throw new Error('Failed to fetch country data');
       }
@@ -46,7 +50,7 @@ function CountryDetailPage() {
             <CardTitle className="text-red-600">Error</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-red-600">An error occurred: {error.message}</p>
+            <p className="text-red-600">An error occurred: {error instanceof Error ? error.message : 'Unknown error'}</p>
           </CardContent>
         </Card>
       </div>
@@ -58,9 +62,9 @@ function CountryDetailPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold flex items-center gap-4">
-            <img 
-              src={countryData?.flags.svg} 
-              alt={`Flag of ${countryData?.name.common}`} 
+            <img
+              src={countryData?.flags.svg}
+              alt={`Flag of ${countryData?.name.common}`}
               className="h-8 w-auto"
             />
             {countryData?.name.common}
@@ -71,11 +75,11 @@ function CountryDetailPage() {
             <span className="font-semibold">Capital:</span> {countryData?.capital?.[0] || 'N/A'}
           </p>
           <p className="text-lg mb-2">
-            <span className="font-semibold">Population:</span> {countryData?.population || 'N/A'}
+            <span className="font-semibold">Population:</span> {countryData?.population?.toLocaleString() || 'N/A'}
           </p>
-          <img 
-            src={countryData?.flags.svg} 
-            alt={`Flag of ${countryData?.name.common}`} 
+          <img
+            src={countryData?.flags.svg}
+            alt={`Flag of ${countryData?.name.common}`}
             className="w-full max-w-md h-auto mt-4 border"
           />
         </CardContent>

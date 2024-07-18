@@ -1,30 +1,44 @@
-# React + TypeScript + Vite
+# Country Search React Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This projects has the following main goals
 
-Currently, two official plugins are available:
+- Provide a search bar to browse countries by name at /countries
+- Search results are linked to a seperate page with details at /countries/{country name}
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Vite
+Great support for Typescript and React
 
-## Expanding the ESLint configuration
+### Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+For this project the following tech was used
 
-- Configure the top-level `parserOptions` property like this:
+### Tanstack Route
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+As there was an interest in using typescript, Tanstack Route was chosen to 
+increase stability with typesafe routes already baked in.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Tanstack Query
+
+Tanstack was chosen to handle all query in declarative format and its clean integration with zod
+
+### Zod
+
+Zod was chosen for handling the validations.
+
+### Tailwind && Shadcn
+
+Tailwind and Shadcn were chosen to bring clean and opinionated UI design.
+
+## Installation
+
+To install please run
+
+ ```npm install```
+
+Then
+ 
+```npm run dev```
+
+
+
+
